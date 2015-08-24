@@ -4,7 +4,7 @@ var request = require('request');
 var config = require('../config');
 
 router.get('/', function(req, res) {
-  res.render('index', { community: config.community });
+  res.redirect(301, 'http://manizales-dev.github.io/');
 });
 
 router.post('/invite', function(req, res) {
