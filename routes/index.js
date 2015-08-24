@@ -8,6 +8,8 @@ router.get('/', function(req, res) {
 });
 
 router.post('/invite', function(req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   if (req.body.email) {
     request.post({
         url: 'https://'+ config.slackUrl + '/api/users.admin.invite',
@@ -17,20 +19,11 @@ router.post('/invite', function(req, res) {
           set_active: true
         }
       }, function(err, httpResponse, body) {
-        // body looks like:
-        //   {"ok":true}
-        //       or
-        //   {"ok":false,"error":"already_invited"}
-        if (err) { return res.send('Error:' + err); }
-        body = JSON.parse(body);
-        if (body.ok) {
-          res.send('Success! Check "'+ req.body.email +'" for an invite from Slack.');
-        } else {
-          res.send('Failed! ' + body.error)
-        }
+        if (err) return res.send(JSON.stringify({ok: false, error: 'Ha ocurrido un error desconocido, por favor intenta mas tarde.'}));
+        res.send(body);
       });
   } else {
-    res.status(400).send('email is required.');
+    res.status(400).send(JSON.stringify({ok: false, error: 'El email es requerido'}));
   }
 });
 
